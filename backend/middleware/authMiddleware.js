@@ -12,15 +12,27 @@ export const protect = async (req, res, next) => {
       
       const decoded = jwt.verify(token, secret);
       
-      if (mongoose.connection.readyState === 1) {
-        const user = await User.findById(decoded.id).select('-password');
-        if (user) {
-          req.user = user;
-          return next();
+      // If connected to MongoDB and decoded ID is a valid 24-char ObjectId hex string
+      if (mongoose.connection.readyState === 1 && mongoose.Types.ObjectId.isValid(decoded.id)) {
+        try {
+          const user = await User.findById(decoded.id).select('-password');
+          if (user) {
+            req.user = user;
+            return next();
+          }
+        } catch (dbErr) {
+          console.warn('[DB User Lookup Warning]:', dbErr.message);
         }
       }
 
-      req.user = { id: decoded.id, role: decoded.role || 'customer', name: decoded.name || 'User', email: decoded.email };
+      // Seamless fallback user payload from token
+      req.user = {
+        _id: decoded.id,
+        id: decoded.id,
+        role: decoded.role || 'customer',
+        name: decoded.name || 'User',
+        email: decoded.email
+      };
       return next();
     } catch (error) {
       console.error('[JWT Auth Middleware Error]:', error.message);
