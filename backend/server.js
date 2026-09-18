@@ -15,7 +15,7 @@ dotenv.config();
 
 const app = express();
 
-// Connect Database
+// Connect Database (cached in serverless)
 connectDB();
 
 // Middleware
@@ -40,7 +40,8 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+// Execute app.listen only when running locally, avoiding hanging execution on Vercel
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`🚀 Savora Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
   });
