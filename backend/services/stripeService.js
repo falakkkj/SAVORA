@@ -1,6 +1,4 @@
-import Stripe from 'stripe';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_mock_stripe_key');
+import stripe from '../config/stripe.js';
 
 export const createCheckoutSession = async (orderItems, orderId) => {
   try {
@@ -28,7 +26,7 @@ export const createCheckoutSession = async (orderItems, orderId) => {
       return { sessionId: session.id, url: session.url };
     }
   } catch (err) {
-    console.warn('Stripe integration fallback mode:', err.message);
+    console.warn('[Stripe Checkout Integration Warning]:', err.message);
   }
 
   // Simulated fallback checkout redirect URL

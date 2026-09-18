@@ -1,12 +1,15 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 let aiClient = null;
+
 if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'mock_gemini_api_key') {
   try {
     aiClient = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   } catch (e) {
-    console.warn('Gemini client init warning:', e.message);
+    console.warn('[Gemini AI Init Warning]:', e.message);
   }
+} else {
+  console.warn('[Gemini AI Config Warning] GEMINI_API_KEY is missing or set to mock default. AI features operating with fallback heuristic engines.');
 }
 
 /**
@@ -25,11 +28,11 @@ export const generateFoodDescriptionAI = async (itemName, category, ingredients)
         return text.trim();
       }
     } catch (error) {
-      console.warn('Gemini API call failed, using intelligent fallback:', error.message);
+      console.warn('[Gemini API Call Warning]:', error.message);
     }
   }
 
-  // Fallback intelligent description generator
+  // Fallback description generator
   const descriptors = [
     `Indulge in our exquisite ${itemName}, expertly prepared with the finest selected ingredients.`,
     `Bursting with vibrant flavors, every bite delivers a harmonious blend of crisp textures and warm aromas.`,
@@ -58,11 +61,11 @@ export const analyzeReviewSentimentAI = async (reviews) => {
         return parsed;
       }
     } catch (error) {
-      console.warn('Gemini sentiment analysis failed, using fallback:', error.message);
+      console.warn('[Gemini Review Analysis Warning]:', error.message);
     }
   }
 
-  // Smart fallback review sentiment analyzer
+  // Fallback review sentiment analyzer
   let pos = 0, neu = 0, neg = 0;
   const highlights = [];
 

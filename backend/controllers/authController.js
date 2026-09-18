@@ -1,14 +1,6 @@
 import User from '../models/User.js';
-import jwt from 'jsonwebtoken';
+import generateToken from '../utils/generateToken.js';
 import mongoose from 'mongoose';
-
-const generateToken = (user) => {
-  return jwt.sign(
-    { id: user._id || user.id, role: user.role, name: user.name, email: user.email },
-    process.env.JWT_SECRET || 'savora_super_secret_jwt_token_key_2026',
-    { expiresIn: '30d' }
-  );
-};
 
 export const registerUser = async (req, res) => {
   try {
