@@ -1,0 +1,22 @@
+services:
+  # Backend Express Web Service
+  - type: web
+    name: savora-backend
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: npm install
+    startCommand: node backend/server.js
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        value: mongodb://127.0.0.1:27017/savora
+      - key: JWT_SECRET
+        value: savora_super_secret_jwt_token_key_2026
+      - key: STRIPE_SECRET_KEY
+        value: sk_test_mock_stripe_key
+      - key: GEMINI_API_KEY
+        value: mock_gemini_api_key
+      - key: FRONTEND_URL
+        value: https://savora-hioxijr4y-falak-jains-projects-b880f654.vercel.app
