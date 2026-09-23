@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Sparkles, Utensils, Star, Flame, ChevronRight, ShieldCheck } from 'lucide-react';
+import { Search, Sparkles, Utensils, Star, Flame, ChevronRight, ShieldCheck, Heart } from 'lucide-react';
 import RestaurantCard from '../../components/user/RestaurantCard';
+import Toast from '../../components/common/Toast';
 import API from '../../api/axiosInstance';
 
 export default function Home() {
@@ -8,6 +9,7 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCuisine, setSelectedCuisine] = useState('All');
   const [loading, setLoading] = useState(true);
+  const [toastMessage, setToastMessage] = useState(null);
 
   useEffect(() => {
     fetchRestaurants();
@@ -36,14 +38,18 @@ export default function Home() {
   return (
     <div className="space-y-12 pb-16">
       
+      {/* Toast Notification */}
+      {toastMessage && <Toast message={toastMessage} onClose={() => setToastMessage(null)} />}
+
       {/* Hero Section */}
       <section className="relative overflow-hidden rounded-3xl glass-panel p-8 sm:p-14 border border-white/10 glow-brand">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-brand-500/10 rounded-full filter blur-3xl -z-10" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/10 rounded-full filter blur-3xl -z-10" />
+        {/* Animated Background Mesh Glows */}
+        <div className="absolute -top-20 -right-20 w-96 h-96 bg-brand-500/15 rounded-full filter blur-3xl animate-pulseGlow -z-10" />
+        <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-purple-500/15 rounded-full filter blur-3xl animate-pulseGlow -z-10" />
 
         <div className="max-w-3xl space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-bold uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-bold uppercase tracking-wider shadow">
+            <Sparkles className="w-3.5 h-3.5 text-brand-400" />
             <span>AI-Crafted Culinary Experience</span>
           </div>
 
@@ -55,7 +61,7 @@ export default function Home() {
           </h1>
 
           <p className="text-base sm:text-lg text-slate-300 font-normal leading-relaxed">
-            Discover top-tier artisanal restaurants, custom AI-enhanced menu selections, and effortless checkout. Freshly prepared and delivered straight to your door.
+            Discover top-tier artisanal restaurants, custom AI-enhanced menu selections, and effortless Stripe checkout. Freshly prepared and delivered straight to your door.
           </p>
 
           {/* Search Box */}
@@ -73,15 +79,15 @@ export default function Home() {
       </section>
 
       {/* Cuisine Filter Pills */}
-      <section className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+      <section className="flex items-center gap-2.5 overflow-x-auto pb-2 scrollbar-none">
         {cuisines.map((c) => (
           <button
             key={c}
             onClick={() => setSelectedCuisine(c)}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 ${
+            className={`px-4.5 py-2.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
               selectedCuisine === c
-                ? 'bg-gradient-to-r from-brand-600 to-brand-700 text-white shadow-lg glow-brand'
-                : 'glass-panel text-slate-300 hover:text-white border border-slate-800'
+                ? 'bg-gradient-to-r from-brand-600 to-brand-700 text-white shadow-lg glow-brand scale-105'
+                : 'glass-panel text-slate-300 hover:text-white border border-slate-800/80'
             }`}
           >
             {c}
@@ -93,10 +99,12 @@ export default function Home() {
       <section className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-white tracking-tight">Featured Restaurants</h2>
-            <p className="text-xs text-slate-400">Hand-curated dining experiences near you</p>
+            <h2 className="text-2xl font-extrabold text-white tracking-tight">Featured Restaurants</h2>
+            <p className="text-xs text-slate-400 mt-0.5">Hand-curated dining experiences near you</p>
           </div>
-          <span className="text-xs font-semibold text-slate-400">{filteredRestaurants.length} Places</span>
+          <span className="text-xs font-bold text-slate-400 bg-slate-800/80 px-3 py-1 rounded-full border border-slate-700/60">
+            {filteredRestaurants.length} Places
+          </span>
         </div>
 
         {loading ? (
