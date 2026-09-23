@@ -4,11 +4,40 @@ import RestaurantCard from '../../components/user/RestaurantCard';
 import Toast from '../../components/common/Toast';
 import API from '../../api/axiosInstance';
 
+const DEFAULT_RESTAURANTS = [
+  {
+    _id: 'rest_001',
+    name: 'Lumina Gourmet Bistro',
+    tagline: 'Modern European & Artisanal Comfort Food',
+    description: 'Experience sensory dining with locally sourced organic ingredients, wood-fired delights, and hand-crafted sauces.',
+    cuisine: ['European', 'Artisanal', 'Italian'],
+    image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80',
+    address: '450 Grand Avenue, Downtown',
+    rating: 4.9,
+    deliveryTime: '20-30 min',
+    priceRange: '$$$',
+    isAvailable: true,
+  },
+  {
+    _id: 'rest_002',
+    name: 'Sakura & Smoke Izakaya',
+    tagline: 'Japanese Ramen, Yakitori & AI Fusion',
+    description: 'Authentic 18-hour tonkotsu broth, charcoal-grilled skewers, and contemporary Japanese bowls.',
+    cuisine: ['Japanese', 'Ramen', 'Asian Fusion'],
+    image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80',
+    address: '88 Sakura Way, Midtown',
+    rating: 4.8,
+    deliveryTime: '25-35 min',
+    priceRange: '$$',
+    isAvailable: true,
+  }
+];
+
 export default function Home() {
-  const [restaurants, setRestaurants] = useState([]);
+  const [restaurants, setRestaurants] = useState(DEFAULT_RESTAURANTS);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCuisine, setSelectedCuisine] = useState('All');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
   useEffect(() => {
@@ -18,9 +47,11 @@ export default function Home() {
   const fetchRestaurants = async () => {
     try {
       const { data } = await API.get('/restaurants');
-      setRestaurants(data);
+      if (Array.isArray(data) && data.length > 0) {
+        setRestaurants(data);
+      }
     } catch (err) {
-      console.warn('Restaurants fetch warning:', err);
+      console.warn('Restaurants fetch warning, using default restaurants:', err);
     } finally {
       setLoading(false);
     }
@@ -28,7 +59,7 @@ export default function Home() {
 
   const cuisines = ['All', 'European', 'Japanese', 'Italian', 'Asian Fusion', 'Artisanal'];
 
-  const filteredRestaurants = restaurants.filter((r) => {
+  const filteredRestaurants = (restaurants || DEFAULT_RESTAURANTS).filter((r) => {
     const matchesSearch = r.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       r.description?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCuisine = selectedCuisine === 'All' || r.cuisine?.includes(selectedCuisine);

@@ -6,15 +6,118 @@ import Toast from '../../components/common/Toast';
 import API from '../../api/axiosInstance';
 import { useSelector } from 'react-redux';
 
+const MOCK_RESTAURANTS = {
+  rest_001: {
+    restaurant: {
+      _id: 'rest_001',
+      name: 'Lumina Gourmet Bistro',
+      tagline: 'Modern European & Artisanal Comfort Food',
+      description: 'Experience sensory dining with locally sourced organic ingredients, wood-fired delights, and hand-crafted sauces.',
+      cuisine: ['European', 'Artisanal', 'Italian'],
+      image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80',
+      address: '450 Grand Avenue, Downtown',
+      rating: 4.9,
+      deliveryTime: '20-30 min',
+      priceRange: '$$$',
+    },
+    menu: [
+      {
+        _id: 'food_001',
+        restaurant: 'rest_001',
+        name: 'Truffle Wild Mushroom Tagliatelle',
+        description: 'Hand-rolled fresh pasta tossed in black truffle velvet sauce, wild chanterelles, and aged Parmigiano Reggiano.',
+        price: 24.50,
+        category: 'Main Course',
+        image: 'https://images.unsplash.com/photo-1621996346565-e3d5d6281270?auto=format&fit=crop&w=800&q=80',
+        tags: ['Vegetarian', 'Truffle', 'Chef Special'],
+        calories: 680,
+      },
+      {
+        _id: 'food_002',
+        restaurant: 'rest_001',
+        name: 'Crispy Wood-Fired Burrata Flatbread',
+        description: 'Creamy Puglia burrata, heirloom cherry tomatoes, fresh basil pesto, and micro-greens on a crisp artisanal crust.',
+        price: 18.00,
+        category: 'Appetizers',
+        image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80',
+        tags: ['Vegetarian', 'Artisanal'],
+        calories: 520,
+      },
+      {
+        _id: 'food_003',
+        restaurant: 'rest_001',
+        name: 'Valrhona Dark Chocolate Lava Cake',
+        description: 'Decadent molten chocolate cake featuring 70% French dark cocoa served with Madagascar vanilla gelato.',
+        price: 12.00,
+        category: 'Desserts',
+        image: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80',
+        tags: ['Sweet', 'Dessert'],
+        calories: 490,
+      }
+    ]
+  },
+  rest_002: {
+    restaurant: {
+      _id: 'rest_002',
+      name: 'Sakura & Smoke Izakaya',
+      tagline: 'Japanese Ramen, Yakitori & AI Fusion',
+      description: 'Authentic 18-hour tonkotsu broth, charcoal-grilled skewers, and contemporary Japanese bowls.',
+      cuisine: ['Japanese', 'Ramen', 'Asian Fusion'],
+      image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80',
+      address: '88 Sakura Way, Midtown',
+      rating: 4.8,
+      deliveryTime: '25-35 min',
+      priceRange: '$$',
+    },
+    menu: [
+      {
+        _id: 'food_004',
+        restaurant: 'rest_002',
+        name: 'Signature Black Garlic Tonkotsu Ramen',
+        description: 'Rich pork bone broth infused with charred black garlic oil, tender chashu belly, nitamago egg, and bamboo shoots.',
+        price: 19.50,
+        category: 'Main Course',
+        image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80',
+        tags: ['Ramen', 'Spicy', 'Chef Special'],
+        calories: 750,
+      },
+      {
+        _id: 'food_005',
+        restaurant: 'rest_002',
+        name: 'Charcoal Skewered Wagyu Beef Yakitori',
+        description: 'Glazed A5 Wagyu beef skewers grilled over binchotan charcoal with sweet tare reduction and shichimi pepper.',
+        price: 22.00,
+        category: 'Appetizers',
+        image: 'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?auto=format&fit=crop&w=800&q=80',
+        tags: ['Gluten-Free', 'Grill'],
+        calories: 410,
+      },
+      {
+        _id: 'food_006',
+        restaurant: 'rest_002',
+        name: 'Yuzu Sparkling Botanical Elixir',
+        description: 'Refreshing sparkling yuzu juice blended with organic green tea, mint leaves, and elderflower syrup.',
+        price: 7.50,
+        category: 'Beverages',
+        image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=800&q=80',
+        tags: ['Refreshing', 'Vegan'],
+        calories: 120,
+      }
+    ]
+  }
+};
+
 export default function RestaurantDetail() {
   const { id } = useParams();
   const { user } = useSelector((state) => state.auth);
 
-  const [restaurant, setRestaurant] = useState(null);
-  const [menu, setMenu] = useState([]);
+  const fallback = MOCK_RESTAURANTS[id] || MOCK_RESTAURANTS.rest_001;
+
+  const [restaurant, setRestaurant] = useState(fallback.restaurant);
+  const [menu, setMenu] = useState(fallback.menu);
   const [reviews, setReviews] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
   // Review Form
@@ -30,10 +133,10 @@ export default function RestaurantDetail() {
   const fetchRestaurantDetail = async () => {
     try {
       const { data } = await API.get(`/restaurants/${id}`);
-      setRestaurant(data.restaurant);
-      setMenu(data.menu || []);
+      if (data?.restaurant) setRestaurant(data.restaurant);
+      if (Array.isArray(data?.menu) && data.menu.length > 0) setMenu(data.menu);
     } catch (err) {
-      console.warn('Fetch restaurant error:', err);
+      console.warn('Fetch restaurant error, using fallback:', err);
     } finally {
       setLoading(false);
     }
@@ -42,7 +145,7 @@ export default function RestaurantDetail() {
   const fetchReviews = async () => {
     try {
       const { data } = await API.get(`/reviews/restaurant/${id}`);
-      setReviews(data);
+      if (Array.isArray(data)) setReviews(data);
     } catch (err) {
       console.warn('Fetch reviews error:', err);
     }
@@ -75,15 +178,6 @@ export default function RestaurantDetail() {
     return (
       <div className="h-96 flex items-center justify-center text-slate-400">
         <div className="w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
-  if (!restaurant) {
-    return (
-      <div className="text-center py-20">
-        <h2 className="text-2xl font-bold text-white">Restaurant Not Found</h2>
-        <Link to="/" className="text-brand-400 hover:underline mt-2 inline-block">Return to Homepage</Link>
       </div>
     );
   }
