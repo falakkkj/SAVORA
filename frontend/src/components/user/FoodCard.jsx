@@ -39,7 +39,7 @@ export default function FoodCard({ foodItem, restaurant, onAddedToast }) {
               {foodItem.name}
             </h4>
             <span className="text-base font-extrabold text-brand-400 shrink-0">
-              ${foodItem.price.toFixed(2)}
+              ₹{foodItem.price}
             </span>
           </div>
 

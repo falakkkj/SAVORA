@@ -7,28 +7,28 @@ import API from '../../api/axiosInstance';
 const DEFAULT_RESTAURANTS = [
   {
     _id: 'rest_001',
-    name: 'Lumina Gourmet Bistro',
-    tagline: 'Modern European & Artisanal Comfort Food',
-    description: 'Experience sensory dining with locally sourced organic ingredients, wood-fired delights, and hand-crafted sauces.',
-    cuisine: ['European', 'Artisanal', 'Italian'],
+    name: 'Maharaja Royal Indian Cuisine',
+    tagline: 'Authentic North & South Indian Fine Dining',
+    description: 'Experience regal Indian gastronomy featuring slow-cooked Mughlai curries, aromatic biryanis, and tandoori charcoal delicacies.',
+    cuisine: ['North Indian', 'Mughlai', 'Biryani'],
     image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80',
-    address: '450 Grand Avenue, Downtown',
+    address: '74 Park Street, Connaught Place',
     rating: 4.9,
     deliveryTime: '20-30 min',
-    priceRange: '$$$',
+    priceRange: '₹₹₹',
     isAvailable: true,
   },
   {
     _id: 'rest_002',
-    name: 'Sakura & Smoke Izakaya',
-    tagline: 'Japanese Ramen, Yakitori & AI Fusion',
-    description: 'Authentic 18-hour tonkotsu broth, charcoal-grilled skewers, and contemporary Japanese bowls.',
-    cuisine: ['Japanese', 'Ramen', 'Asian Fusion'],
+    name: 'Spice Symphony Tandoor Bistro',
+    tagline: 'Clay-Oven Grills & Coastal Indian Delights',
+    description: 'Fresh tandoori tikka, buttery naan breads, sizzling kebabs, and authentic South Indian dosa varieties.',
+    cuisine: ['Tandoori', 'South Indian', 'Street Food'],
     image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80',
-    address: '88 Sakura Way, Midtown',
+    address: '12 MG Road, Indiranagar',
     rating: 4.8,
     deliveryTime: '25-35 min',
-    priceRange: '$$',
+    priceRange: '₹₹',
     isAvailable: true,
   }
 ];
@@ -51,13 +51,13 @@ export default function Home() {
         setRestaurants(data);
       }
     } catch (err) {
-      console.warn('Restaurants fetch warning, using default restaurants:', err);
+      console.warn('Restaurants fetch warning, using default Indian restaurants:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const cuisines = ['All', 'European', 'Japanese', 'Italian', 'Asian Fusion', 'Artisanal'];
+  const cuisines = ['All', 'North Indian', 'South Indian', 'Mughlai', 'Biryani', 'Tandoori'];
 
   const filteredRestaurants = (restaurants || DEFAULT_RESTAURANTS).filter((r) => {
     const matchesSearch = r.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -81,18 +81,18 @@ export default function Home() {
         <div className="max-w-3xl space-y-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-bold uppercase tracking-wider shadow">
             <Sparkles className="w-3.5 h-3.5 text-brand-400" />
-            <span>AI-Crafted Culinary Experience</span>
+            <span>AI-Crafted Indian Culinary Experience</span>
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight leading-[1.1]">
-            Taste Gourmet Perfection, <br />
+            Taste Indian Gourmet, <br />
             <span className="bg-gradient-to-r from-brand-400 via-rose-400 to-amber-400 bg-clip-text text-transparent">
               Powered by AI.
             </span>
           </h1>
 
           <p className="text-base sm:text-lg text-slate-300 font-normal leading-relaxed">
-            Discover top-tier artisanal restaurants, custom AI-enhanced menu selections, and effortless Stripe checkout. Freshly prepared and delivered straight to your door.
+            Discover top-tier Indian restaurants, rich butter chicken curries, zafrani biryanis, AI-enhanced menu descriptions, and seamless Stripe checkout in INR (₹).
           </p>
 
           {/* Search Box */}
@@ -100,7 +100,7 @@ export default function Home() {
             <Search className="w-5 h-5 text-slate-400 absolute left-4 top-4" />
             <input
               type="text"
-              placeholder="Search dishes, restaurants, or cuisines..."
+              placeholder="Search biryanis, curries, tandoori, or Indian dining..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full bg-slate-900/90 border border-slate-700/80 rounded-2xl pl-12 pr-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-all shadow-xl"
@@ -130,8 +130,8 @@ export default function Home() {
       <section className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-extrabold text-white tracking-tight">Featured Restaurants</h2>
-            <p className="text-xs text-slate-400 mt-0.5">Hand-curated dining experiences near you</p>
+            <h2 className="text-2xl font-extrabold text-white tracking-tight">Featured Indian Restaurants</h2>
+            <p className="text-xs text-slate-400 mt-0.5">Authentic regional Indian dining experiences near you</p>
           </div>
           <span className="text-xs font-bold text-slate-400 bg-slate-800/80 px-3 py-1 rounded-full border border-slate-700/60">
             {filteredRestaurants.length} Places

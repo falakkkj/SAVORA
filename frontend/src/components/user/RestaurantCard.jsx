@@ -74,7 +74,7 @@ export default function RestaurantCard({ restaurant }) {
             <span className="truncate">{restaurant.address}</span>
           </div>
 
-          <span className="text-brand-400 font-extrabold">{restaurant.priceRange || '$$'}</span>
+          <span className="text-brand-400 font-extrabold">{restaurant.priceRange || '₹₹'}</span>
         </div>
       </div>
     </Link>

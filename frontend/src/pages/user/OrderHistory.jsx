@@ -34,7 +34,7 @@ export default function OrderHistory() {
         <div className="text-center py-16 glass-card rounded-2xl">
           <ShoppingBag className="w-12 h-12 text-slate-600 mx-auto mb-3" />
           <h3 className="text-base font-bold text-white">No active or past orders</h3>
-          <p className="text-xs text-slate-400 mt-1">Place an order from one of our partner restaurants to see it here!</p>
+          <p className="text-xs text-slate-400 mt-1">Place an order from one of our partner Indian restaurants to see it here!</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -48,11 +48,11 @@ export default function OrderHistory() {
                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-4">
                   <div>
                     <span className="text-xs font-mono font-bold text-brand-400">#{order._id?.slice(-8).toUpperCase()}</span>
-                    <h3 className="text-base font-bold text-white mt-0.5">{order.restaurant?.name || 'Gourmet Restaurant'}</h3>
+                    <h3 className="text-base font-bold text-white mt-0.5">{order.restaurant?.name || 'Maharaja Royal Indian Cuisine'}</h3>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-white">${order.totalAmount?.toFixed(2)}</span>
+                    <span className="text-xs font-extrabold text-white">₹{order.totalAmount}</span>
                     <span className={`inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full border ${
                       order.status === 'Delivered'
                         ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
@@ -69,7 +69,7 @@ export default function OrderHistory() {
                   {order.items?.map((item, idx) => (
                     <div key={idx} className="flex justify-between text-xs text-slate-300">
                       <span>{item.quantity}x {item.name}</span>
-                      <span className="font-semibold text-slate-200">${(item.price * item.quantity).toFixed(2)}</span>
+                      <span className="font-semibold text-slate-200">₹{item.price * item.quantity}</span>
                     </div>
                   ))}
                 </div>
@@ -81,7 +81,7 @@ export default function OrderHistory() {
                       const active = ['Pending', 'Preparing', 'Out for Delivery', 'Delivered'].indexOf(order.status) >= i;
                       return (
                         <div key={step} className={`py-1 rounded border transition-all ${
-                          active ? 'bg-brand-500/20 border-brand-500/40 text-brand-300' : 'bg-slate-900 border-slate-800 text-slate-600'
+                          active ? 'bg-brand-500/20 border-brand-500/40 text-brand-300 font-bold' : 'bg-slate-900 border-slate-800 text-slate-600'
                         }`}>
                           {step}
                         </div>

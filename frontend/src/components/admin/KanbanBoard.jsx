@@ -58,14 +58,14 @@ export default function KanbanBoard({ orders }) {
                         </span>
                         <h4 className="text-sm font-bold text-white mt-1">{order.customerName || 'Customer'}</h4>
                       </div>
-                      <span className="text-xs font-extrabold text-brand-400">${order.totalAmount?.toFixed(2)}</span>
+                      <span className="text-xs font-extrabold text-brand-400">₹{order.totalAmount}</span>
                     </div>
 
                     <div className="text-xs text-slate-300 space-y-1 bg-slate-900/60 p-2 rounded-lg border border-slate-800">
                       {order.items?.map((item, idx) => (
                         <div key={idx} className="flex justify-between">
                           <span className="truncate">{item.quantity}x {item.name}</span>
-                          <span className="text-slate-400 font-semibold">${(item.price * item.quantity).toFixed(2)}</span>
+                          <span className="text-slate-400 font-semibold">₹{item.price * item.quantity}</span>
                         </div>
                       ))}
                     </div>

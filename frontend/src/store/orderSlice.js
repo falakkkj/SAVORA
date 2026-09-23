@@ -5,11 +5,11 @@ const MOCK_USER_ORDERS = [
   {
     _id: 'ord_1001',
     customerName: 'Sophia Martinez',
-    restaurant: { name: 'Lumina Gourmet Bistro' },
+    restaurant: { name: 'Maharaja Royal Indian Cuisine' },
     items: [
-      { foodItem: 'food_001', name: 'Truffle Wild Mushroom Tagliatelle', price: 24.50, quantity: 2 }
+      { foodItem: 'food_001', name: 'Butter Chicken & Garlic Naan', price: 380, quantity: 2 }
     ],
-    totalAmount: 49.00,
+    totalAmount: 760,
     status: 'Preparing',
     paymentStatus: 'Paid',
     createdAt: new Date(Date.now() - 3600000).toISOString(),
@@ -21,41 +21,41 @@ const MOCK_ADMIN_ORDERS = [
     _id: 'ord_1001',
     customerName: 'Sophia Martinez',
     customerEmail: 'user@savora.com',
-    restaurant: { name: 'Lumina Gourmet Bistro' },
+    restaurant: { name: 'Maharaja Royal Indian Cuisine' },
     items: [
-      { foodItem: 'food_001', name: 'Truffle Wild Mushroom Tagliatelle', price: 24.50, quantity: 2 }
+      { foodItem: 'food_001', name: 'Butter Chicken & Garlic Naan', price: 380, quantity: 2 }
     ],
-    totalAmount: 49.00,
+    totalAmount: 760,
     status: 'Preparing',
     paymentStatus: 'Paid',
-    specialNotes: 'Extra parmesan on the side please!',
+    specialNotes: 'Make it medium spicy please!',
     createdAt: new Date(Date.now() - 3600000).toISOString(),
   },
   {
     _id: 'ord_1002',
     customerName: 'Marcus Wright',
     customerEmail: 'marcus@example.com',
-    restaurant: { name: 'Sakura & Smoke Izakaya' },
+    restaurant: { name: 'Spice Symphony Tandoor Bistro' },
     items: [
-      { foodItem: 'food_004', name: 'Signature Black Garlic Tonkotsu Ramen', price: 19.50, quantity: 1 },
-      { foodItem: 'food_006', name: 'Yuzu Sparkling Botanical Elixir', price: 7.50, quantity: 1 }
+      { foodItem: 'food_004', name: 'Hyderabadi Zafrani Dum Biryani', price: 340, quantity: 1 },
+      { foodItem: 'food_006', name: 'Alphonso Mango Lassi', price: 120, quantity: 1 }
     ],
-    totalAmount: 27.00,
+    totalAmount: 460,
     status: 'Out for Delivery',
     paymentStatus: 'Paid',
-    specialNotes: 'Call upon arrival.',
+    specialNotes: 'Include extra green chutney.',
     createdAt: new Date(Date.now() - 7200000).toISOString(),
   },
   {
     _id: 'ord_1003',
     customerName: 'Elena Rostova',
     customerEmail: 'elena@example.com',
-    restaurant: { name: 'Lumina Gourmet Bistro' },
+    restaurant: { name: 'Maharaja Royal Indian Cuisine' },
     items: [
-      { foodItem: 'food_002', name: 'Crispy Wood-Fired Burrata Flatbread', price: 18.00, quantity: 1 },
-      { foodItem: 'food_003', name: 'Valrhona Dark Chocolate Lava Cake', price: 12.00, quantity: 2 }
+      { foodItem: 'food_002', name: 'Paneer Tikka Angara', price: 290, quantity: 1 },
+      { foodItem: 'food_003', name: 'Gulab Jamun with Saffron Rabri', price: 140, quantity: 2 }
     ],
-    totalAmount: 42.00,
+    totalAmount: 570,
     status: 'Pending',
     paymentStatus: 'Paid',
     createdAt: new Date().toISOString(),

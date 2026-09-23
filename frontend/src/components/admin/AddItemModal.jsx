@@ -9,8 +9,8 @@ export default function AddItemModal({ isOpen, onClose, restaurantId, onItemAdde
     ingredients: '',
     price: '',
     category: 'Main Course',
-    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
-    tags: 'Chef Special, Artisanal',
+    image: 'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?auto=format&fit=crop&w=800&q=80',
+    tags: 'Chef Special, Mughlai',
     calories: '550',
   });
 
@@ -22,7 +22,7 @@ export default function AddItemModal({ isOpen, onClose, restaurantId, onItemAdde
   // Trigger Gemini AI Description Generation
   const handleGenerateAIDescription = async () => {
     if (!formData.name) {
-      alert('Please enter a food item name first (e.g., "Truffle Ribeye Steak").');
+      alert('Please enter a food item name first (e.g., "Butter Chicken & Garlic Naan").');
       return;
     }
 
@@ -49,17 +49,17 @@ export default function AddItemModal({ isOpen, onClose, restaurantId, onItemAdde
     setSubmitting(true);
     try {
       await API.post('/foods', {
-        restaurant: restaurantId,
+        restaurant: restaurantId || 'rest_001',
         name: formData.name,
         description: formData.description,
-        price: parseFloat(formData.price),
+        price: parseFloat(formData.price) || 350,
         category: formData.category,
         image: formData.image,
         tags: formData.tags.split(',').map((t) => t.trim()),
         calories: parseInt(formData.calories) || 450,
       });
 
-      onItemAdded();
+      if (onItemAdded) onItemAdded();
       onClose();
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to add item');
@@ -84,8 +84,8 @@ export default function AddItemModal({ isOpen, onClose, restaurantId, onItemAdde
             <Plus className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white tracking-tight">Add New Culinary Item</h2>
-            <p className="text-xs text-slate-400">Create a dish for your menu with AI-assisted descriptions</p>
+            <h2 className="text-xl font-bold text-white tracking-tight">Add New Culinary Dish</h2>
+            <p className="text-xs text-slate-400">Create an Indian dish for your menu with AI-assisted descriptions</p>
           </div>
         </div>
 
@@ -96,7 +96,7 @@ export default function AddItemModal({ isOpen, onClose, restaurantId, onItemAdde
               <input
                 type="text"
                 required
-                placeholder="e.g. Black Truffle Tagliatelle"
+                placeholder="e.g. Butter Chicken & Garlic Naan"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:border-purple-500 focus:outline-none"
@@ -121,12 +121,12 @@ export default function AddItemModal({ isOpen, onClose, restaurantId, onItemAdde
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Price ($) *</label>
+              <label className="block text-xs font-semibold text-slate-300 mb-1">Price (₹) *</label>
               <input
                 type="number"
-                step="0.01"
+                step="1"
                 required
-                placeholder="19.99"
+                placeholder="350"
                 value={formData.price}
                 onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                 className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:border-purple-500 focus:outline-none"
@@ -137,7 +137,7 @@ export default function AddItemModal({ isOpen, onClose, restaurantId, onItemAdde
               <label className="block text-xs font-semibold text-slate-300 mb-1">Ingredients / Notes (for AI)</label>
               <input
                 type="text"
-                placeholder="e.g. wild mushrooms, parmesan, cream"
+                placeholder="e.g. tandoori chicken, tomato butter gravy, saffron"
                 value={formData.ingredients}
                 onChange={(e) => setFormData({ ...formData, ingredients: e.target.value })}
                 className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:border-purple-500 focus:outline-none"
@@ -188,7 +188,7 @@ export default function AddItemModal({ isOpen, onClose, restaurantId, onItemAdde
             disabled={submitting}
             className="w-full mt-3 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl text-sm transition-all shadow-lg hover:shadow-purple-600/30 flex items-center justify-center gap-2"
           >
-            {submitting ? 'Saving Item...' : 'Save & Publish to Menu'}
+            {submitting ? 'Saving Dish...' : 'Save & Publish to Menu'}
           </button>
         </form>
 

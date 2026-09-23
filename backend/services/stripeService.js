@@ -5,7 +5,7 @@ export const createCheckoutSession = async (orderItems, orderId) => {
     if (process.env.STRIPE_SECRET_KEY && process.env.STRIPE_SECRET_KEY !== 'sk_test_mock_stripe_key') {
       const lineItems = orderItems.map((item) => ({
         price_data: {
-          currency: 'usd',
+          currency: 'inr',
           product_data: {
             name: item.name,
           },
