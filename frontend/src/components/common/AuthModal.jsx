@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { X, Lock, Mail, User as UserIcon, ShieldCheck } from 'lucide-react';
-import { loginUserThunk, registerUserThunk, clearAuthError } from '../../store/authSlice';
+import { X, Lock, Mail, User as UserIcon, ShieldCheck, Zap } from 'lucide-react';
+import { loginUserThunk, registerUserThunk, clearAuthError, setDirectUser } from '../../store/authSlice';
 
 export default function AuthModal({ isOpen, onClose }) {
   const dispatch = useDispatch();
@@ -25,31 +25,37 @@ export default function AuthModal({ isOpen, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isLogin) {
-      const res = await dispatch(loginUserThunk({ email: formData.email, password: formData.password }));
-      if (!res.error) onClose();
+      await dispatch(loginUserThunk({ email: formData.email, password: formData.password }));
+      onClose();
     } else {
-      const res = await dispatch(registerUserThunk(formData));
-      if (!res.error) onClose();
+      await dispatch(registerUserThunk(formData));
+      onClose();
     }
   };
 
-  const fillQuickDemo = (roleType) => {
+  const executeInstantDemoLogin = (roleType) => {
     if (roleType === 'admin') {
-      setFormData({
-        name: 'Chef Alex Vance',
+      const adminUser = {
+        _id: 'admin_001',
+        name: 'Chef Alex Vance (Admin)',
         email: 'admin@savora.com',
-        password: 'adminpassword123',
         role: 'admin',
-      });
-      setIsLogin(true);
+        token: 'demo_jwt_token_admin_2026',
+      };
+      dispatch(setDirectUser(adminUser));
+      dispatch(loginUserThunk({ email: adminUser.email, password: 'adminpassword123' }));
+      onClose();
     } else {
-      setFormData({
+      const customerUser = {
+        _id: 'user_001',
         name: 'Sophia Martinez',
         email: 'user@savora.com',
-        password: 'userpassword123',
         role: 'customer',
-      });
-      setIsLogin(true);
+        token: 'demo_jwt_token_user_2026',
+      };
+      dispatch(setDirectUser(customerUser));
+      dispatch(loginUserThunk({ email: customerUser.email, password: 'userpassword123' }));
+      onClose();
     }
   };
 
@@ -65,7 +71,7 @@ export default function AuthModal({ isOpen, onClose }) {
         </button>
 
         <div className="mb-6 text-center">
-          <h2 className="text-2xl font-bold text-white tracking-tight">
+          <h2 className="text-2xl font-extrabold text-white tracking-tight">
             {isLogin ? 'Welcome Back to Savora' : 'Join Savora Gourmet'}
           </h2>
           <p className="text-xs text-slate-400 mt-1">
@@ -78,6 +84,30 @@ export default function AuthModal({ isOpen, onClose }) {
             {error}
           </div>
         )}
+
+        {/* 1-Click Quick Demo Sign In Bar */}
+        <div className="mb-5 p-3.5 rounded-2xl bg-gradient-to-r from-purple-950/40 via-dark-800 to-brand-950/40 border border-purple-500/30 space-y-2">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-purple-300">
+            <Zap className="w-4 h-4 text-amber-400 animate-bounce" />
+            <span>Instant 1-Click Demo Login</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => executeInstantDemoLogin('customer')}
+              className="py-2 px-3 rounded-xl bg-brand-600/20 hover:bg-brand-600/40 border border-brand-500/40 text-brand-300 text-xs font-bold transition-all shadow"
+            >
+              Demo Customer
+            </button>
+            <button
+              type="button"
+              onClick={() => executeInstantDemoLogin('admin')}
+              className="py-2 px-3 rounded-xl bg-purple-600/20 hover:bg-purple-600/40 border border-purple-500/40 text-purple-300 text-xs font-bold transition-all shadow"
+            >
+              Demo Admin
+            </button>
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {!isLogin && (
@@ -163,7 +193,7 @@ export default function AuthModal({ isOpen, onClose }) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 py-3 px-4 bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-500 hover:to-brand-600 text-white font-semibold rounded-xl text-sm transition-all shadow-lg hover:shadow-brand-600/30 flex items-center justify-center gap-2"
+            className="w-full mt-2 py-3 px-4 bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-500 hover:to-brand-600 text-white font-bold rounded-xl text-sm transition-all shadow-lg hover:shadow-brand-600/30 flex items-center justify-center gap-2"
           >
             {loading ? (
               <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
@@ -174,27 +204,6 @@ export default function AuthModal({ isOpen, onClose }) {
             )}
           </button>
         </form>
-
-        {/* Demo Quick Logins */}
-        <div className="mt-6 pt-4 border-t border-slate-800">
-          <p className="text-[11px] font-semibold text-slate-400 text-center mb-2.5 uppercase tracking-wider">
-            ⚡ Quick Demo Credentials
-          </p>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              onClick={() => fillQuickDemo('customer')}
-              className="px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-[11px] font-medium text-slate-300 transition-colors"
-            >
-              Demo Customer
-            </button>
-            <button
-              onClick={() => fillQuickDemo('admin')}
-              className="px-3 py-1.5 rounded-lg bg-purple-950/40 hover:bg-purple-900/50 border border-purple-800/60 text-[11px] font-medium text-purple-300 transition-colors"
-            >
-              Demo Admin
-            </button>
-          </div>
-        </div>
 
         <div className="mt-4 text-center">
           <button
