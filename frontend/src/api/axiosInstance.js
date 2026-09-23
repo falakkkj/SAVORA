@@ -1,7 +1,10 @@
 import axios from 'axios';
 
+// Flexibly supports separate backend deployment URL or relative /api proxy
+const baseURL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || '/api';
+
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || '/api',
+  baseURL,
 });
 
 // Interceptor to append Bearer token automatically

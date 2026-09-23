@@ -15,16 +15,28 @@ dotenv.config();
 
 const app = express();
 
-// Connect Database (cached in serverless)
+// Connect Database
 connectDB();
 
-// Middleware
-app.use(cors());
+// CORS Configuration for standalone or cross-origin deployments
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
+app.options('*', cors());
+
 app.use(express.json());
 
 // API Base Check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'active', system: 'Savora AI MERN Core', time: new Date().toISOString() });
+});
+
+// Root API Welcome Check
+app.get('/', (req, res) => {
+  res.json({ message: 'Savora API Backend is active and running!', health: '/api/health' });
 });
 
 // API Routes
@@ -40,8 +52,7 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-// Execute app.listen only when running locally, avoiding hanging execution on Vercel
-if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`🚀 Savora Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
   });
