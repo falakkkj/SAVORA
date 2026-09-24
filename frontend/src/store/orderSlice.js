@@ -5,7 +5,7 @@ const MOCK_USER_ORDERS = [
   {
     _id: 'ord_1001',
     customerName: 'Sophia Martinez',
-    restaurant: { name: 'Maharaja Royal Indian Cuisine' },
+    restaurant: { _id: 'rest_001', name: 'Maharaja Royal Indian Cuisine' },
     items: [
       { foodItem: 'food_001', name: 'Butter Chicken & Garlic Naan', price: 380, quantity: 2 }
     ],
@@ -21,7 +21,7 @@ const MOCK_ADMIN_ORDERS = [
     _id: 'ord_1001',
     customerName: 'Sophia Martinez',
     customerEmail: 'user@savora.com',
-    restaurant: { name: 'Maharaja Royal Indian Cuisine' },
+    restaurant: { _id: 'rest_001', name: 'Maharaja Royal Indian Cuisine' },
     items: [
       { foodItem: 'food_001', name: 'Butter Chicken & Garlic Naan', price: 380, quantity: 2 }
     ],
@@ -35,7 +35,7 @@ const MOCK_ADMIN_ORDERS = [
     _id: 'ord_1002',
     customerName: 'Marcus Wright',
     customerEmail: 'marcus@example.com',
-    restaurant: { name: 'Spice Symphony Tandoor Bistro' },
+    restaurant: { _id: 'rest_002', name: 'Spice Symphony Tandoor Bistro' },
     items: [
       { foodItem: 'food_004', name: 'Hyderabadi Zafrani Dum Biryani', price: 340, quantity: 1 },
       { foodItem: 'food_006', name: 'Alphonso Mango Lassi', price: 120, quantity: 1 }
@@ -50,7 +50,7 @@ const MOCK_ADMIN_ORDERS = [
     _id: 'ord_1003',
     customerName: 'Elena Rostova',
     customerEmail: 'elena@example.com',
-    restaurant: { name: 'Maharaja Royal Indian Cuisine' },
+    restaurant: { _id: 'rest_001', name: 'Maharaja Royal Indian Cuisine' },
     items: [
       { foodItem: 'food_002', name: 'Paneer Tikka Angara', price: 290, quantity: 1 },
       { foodItem: 'food_003', name: 'Gulab Jamun with Saffron Rabri', price: 140, quantity: 2 }
@@ -62,13 +62,44 @@ const MOCK_ADMIN_ORDERS = [
   }
 ];
 
+const loadStoredUserOrders = () => {
+  try {
+    const raw = localStorage.getItem('savora_user_orders');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) {
+    console.error('Failed to load savora_user_orders from localStorage:', e);
+  }
+  return MOCK_USER_ORDERS;
+};
+
+const saveUserOrdersToStorage = (orders) => {
+  try {
+    localStorage.setItem('savora_user_orders', JSON.stringify(orders));
+  } catch (e) {
+    console.error('Failed to save savora_user_orders to localStorage:', e);
+  }
+};
+
 export const fetchMyOrders = createAsyncThunk('orders/fetchMine', async (_, { rejectWithValue }) => {
   try {
     const { data } = await API.get('/orders/my-orders');
-    if (Array.isArray(data) && data.length > 0) return data;
-    return MOCK_USER_ORDERS;
+    if (Array.isArray(data) && data.length > 0) {
+      const stored = loadStoredUserOrders();
+      const merged = [...stored];
+      data.forEach((apiOrd) => {
+        if (!merged.some((m) => m._id === apiOrd._id)) {
+          merged.push(apiOrd);
+        }
+      });
+      saveUserOrdersToStorage(merged);
+      return merged;
+    }
+    return loadStoredUserOrders();
   } catch (error) {
-    return MOCK_USER_ORDERS;
+    return loadStoredUserOrders();
   }
 });
 
@@ -94,12 +125,28 @@ export const updateOrderStatusThunk = createAsyncThunk('orders/updateStatus', as
 const orderSlice = createSlice({
   name: 'orders',
   initialState: {
-    userOrders: MOCK_USER_ORDERS,
+    userOrders: loadStoredUserOrders(),
     adminOrders: MOCK_ADMIN_ORDERS,
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    addCreatedOrder: (state, action) => {
+      const newOrder = action.payload;
+      const filteredUser = state.userOrders.filter((o) => o._id !== newOrder._id);
+      state.userOrders = [newOrder, ...filteredUser];
+      saveUserOrdersToStorage(state.userOrders);
+
+      const filteredAdmin = state.adminOrders.filter((o) => o._id !== newOrder._id);
+      state.adminOrders = [newOrder, ...filteredAdmin];
+    },
+    updateOrderStatusLocal: (state, action) => {
+      const { id, status } = action.payload;
+      state.userOrders = state.userOrders.map((o) => (o._id === id ? { ...o, status } : o));
+      state.adminOrders = state.adminOrders.map((o) => (o._id === id ? { ...o, status } : o));
+      saveUserOrdersToStorage(state.userOrders);
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchMyOrders.pending, (state) => {
@@ -109,9 +156,9 @@ const orderSlice = createSlice({
         state.loading = false;
         state.userOrders = action.payload;
       })
-      .addCase(fetchMyOrders.rejected, (state, action) => {
+      .addCase(fetchMyOrders.rejected, (state) => {
         state.loading = false;
-        state.userOrders = MOCK_USER_ORDERS;
+        state.userOrders = loadStoredUserOrders();
       })
       .addCase(fetchAdminOrders.pending, (state) => {
         state.loading = true;
@@ -120,7 +167,7 @@ const orderSlice = createSlice({
         state.loading = false;
         state.adminOrders = action.payload;
       })
-      .addCase(fetchAdminOrders.rejected, (state, action) => {
+      .addCase(fetchAdminOrders.rejected, (state) => {
         state.loading = false;
         state.adminOrders = MOCK_ADMIN_ORDERS;
       })
@@ -130,8 +177,14 @@ const orderSlice = createSlice({
         if (index !== -1) {
           state.adminOrders[index] = { ...state.adminOrders[index], ...updated };
         }
+        const userIdx = state.userOrders.findIndex((o) => o._id === updated._id);
+        if (userIdx !== -1) {
+          state.userOrders[userIdx] = { ...state.userOrders[userIdx], ...updated };
+          saveUserOrdersToStorage(state.userOrders);
+        }
       });
   },
 });
 
+export const { addCreatedOrder, updateOrderStatusLocal } = orderSlice.actions;
 export default orderSlice.reducer;

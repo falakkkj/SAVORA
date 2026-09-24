@@ -30,6 +30,58 @@ const DEFAULT_RESTAURANTS = [
     deliveryTime: '25-35 min',
     priceRange: '₹₹',
     isAvailable: true,
+  },
+  {
+    _id: 'rest_003',
+    name: 'Mumbai Street Spice Co.',
+    tagline: 'Authentic Chaat, Vada Pav & BOMBAY Street Delights',
+    description: 'Crispy Pani Puri, Mumbai Vada Pav, Pav Bhaji cooked on large tawa, and sizzling Bhel Puri.',
+    cuisine: ['Street Food', 'North Indian', 'Snacks'],
+    image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1200&q=80',
+    address: '45 Chowpatty Beach Road, Marine Drive',
+    rating: 4.7,
+    deliveryTime: '15-25 min',
+    priceRange: '₹',
+    isAvailable: true,
+  },
+  {
+    _id: 'rest_004',
+    name: 'Chennai Express Tiffin & Dosa Hub',
+    tagline: 'Traditional South Indian Chettinad & Filter Coffee',
+    description: 'Steaming hot idlis, crispy ghee roast dosas, vada dipping sambar, and authentic Kumbakonam filter coffee.',
+    cuisine: ['South Indian', 'Breakfast'],
+    image: 'https://images.unsplash.com/photo-1610192244261-3f33de3f55e4?auto=format&fit=crop&w=1200&q=80',
+    address: '88 Anna Salai, T. Nagar',
+    rating: 4.9,
+    deliveryTime: '15-25 min',
+    priceRange: '₹',
+    isAvailable: true,
+  },
+  {
+    _id: 'rest_005',
+    name: 'Peshawri Tandoor & Kebab Grill',
+    tagline: 'Charcoal-Grilled Mughlai Kebabs & Rich Gravies',
+    description: 'Succulent Galouti kebabs, fiery chicken tikka, Kashmiri rogan josh, and soft rumali roti.',
+    cuisine: ['Tandoori', 'Mughlai', 'North Indian'],
+    image: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=1200&q=80',
+    address: '22 Khan Market, New Delhi',
+    rating: 4.9,
+    deliveryTime: '30-40 min',
+    priceRange: '₹₹₹',
+    isAvailable: true,
+  },
+  {
+    _id: 'rest_006',
+    name: 'Punjab Da Dhaba & Paratha House',
+    tagline: 'Rustic Highway Dhaba Flavors & Lassi',
+    description: 'Amritsari Kulcha, Dal Makhani slow-cooked overnight, Sarson Ka Saag with Makki Roti, and thick sweet lassi.',
+    cuisine: ['North Indian', 'Dhaba Style'],
+    image: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=1200&q=80',
+    address: 'GT Road, Highway Milestone 42',
+    rating: 4.8,
+    deliveryTime: '20-35 min',
+    priceRange: '₹₹',
+    isAvailable: true,
   }
 ];
 
@@ -57,7 +109,7 @@ export default function Home() {
     }
   };
 
-  const cuisines = ['All', 'North Indian', 'South Indian', 'Mughlai', 'Biryani', 'Tandoori'];
+  const cuisines = ['All', 'North Indian', 'South Indian', 'Mughlai', 'Biryani', 'Tandoori', 'Street Food', 'Breakfast', 'Dhaba Style'];
 
   const filteredRestaurants = (restaurants || DEFAULT_RESTAURANTS).filter((r) => {
     const matchesSearch = r.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -92,7 +144,7 @@ export default function Home() {
           </h1>
 
           <p className="text-base sm:text-lg text-slate-300 font-normal leading-relaxed">
-            Discover top-tier Indian restaurants, rich butter chicken curries, zafrani biryanis, AI-enhanced menu descriptions, and seamless Stripe checkout in INR (₹).
+            Discover top-tier Indian restaurants, rich butter chicken curries, zafrani biryanis, authentic South Indian tiffins, street chaat, AI-enhanced menu descriptions, and seamless Stripe checkout in INR (₹).
           </p>
 
           {/* Search Box */}
@@ -100,7 +152,7 @@ export default function Home() {
             <Search className="w-5 h-5 text-slate-400 absolute left-4 top-4" />
             <input
               type="text"
-              placeholder="Search biryanis, curries, tandoori, or Indian dining..."
+              placeholder="Search biryanis, curries, tandoori, dosas, street food..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full bg-slate-900/90 border border-slate-700/80 rounded-2xl pl-12 pr-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-all shadow-xl"

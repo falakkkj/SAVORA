@@ -1,6 +1,6 @@
 import Order from '../models/Order.js';
 import mongoose from 'mongoose';
-import { mockOrders } from '../config/mockData.js';
+import { mockOrders, mockRestaurants } from '../config/mockData.js';
 import { createCheckoutSession } from '../services/stripeService.js';
 
 let memoryOrders = [...mockOrders];
@@ -41,12 +41,13 @@ export const createOrder = async (req, res) => {
 
     // In-memory fallback order creation
     const newId = 'ord_' + Date.now();
+    const restObj = mockRestaurants.find(r => r._id === restaurant) || mockRestaurants[0];
     const newOrder = {
       _id: newId,
       customer: req.user?._id || 'user_001',
       customerName: req.user?.name || 'Sophia Martinez',
       customerEmail: req.user?.email || 'user@savora.com',
-      restaurant: { _id: restaurant, name: 'Lumina Gourmet Bistro' },
+      restaurant: { _id: restObj._id, name: restObj.name },
       items,
       totalAmount,
       status: 'Pending',

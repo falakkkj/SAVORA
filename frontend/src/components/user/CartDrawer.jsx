@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { X, Plus, Minus, Trash2, ShoppingBag, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { addToCart, removeFromCart, clearCart, toggleCartDrawer } from '../../store/cartSlice';
+import { addCreatedOrder } from '../../store/orderSlice';
 import { setDirectUser } from '../../store/authSlice';
 import API from '../../api/axiosInstance';
 
@@ -40,25 +41,49 @@ export default function CartDrawer() {
       deliveryAddress: currentUser.address || { street: '128 Ocean Avenue', city: 'Metropolis', zip: '10002' },
     };
 
+    let createdId = `ord_${Date.now()}`;
+    let checkoutUrl = null;
+
     try {
       const { data } = await API.post('/orders', orderPayload);
-      dispatch(clearCart());
-      dispatch(toggleCartDrawer(false));
-
-      if (data && data.checkoutUrl) {
-        window.location.href = data.checkoutUrl;
-      } else {
-        const id = data?.order?._id || `ord_${Date.now()}`;
-        navigate(`/order-success?orderId=${id}`);
-      }
+      if (data?.order?._id) createdId = data.order._id;
+      if (data?.checkoutUrl) checkoutUrl = data.checkoutUrl;
     } catch (err) {
       console.warn('[Checkout Notice]: Network or API endpoint fallback. Completing checkout locally.');
-      const localId = `ord_${Date.now()}`;
-      dispatch(clearCart());
-      dispatch(toggleCartDrawer(false));
-      navigate(`/order-success?orderId=${localId}`);
-    } finally {
-      setSubmitting(false);
+    }
+
+    const newOrderObj = {
+      _id: createdId,
+      customerName: currentUser.name || 'Sophia Martinez',
+      customerEmail: currentUser.email || 'user@savora.com',
+      restaurant: {
+        _id: restaurant?._id || 'rest_001',
+        name: restaurant?.name || 'Maharaja Royal Indian Cuisine',
+        image: restaurant?.image,
+      },
+      items: items.map((i) => ({
+        foodItem: i.foodItem,
+        name: i.name,
+        price: i.price,
+        quantity: i.quantity,
+        image: i.image,
+      })),
+      totalAmount,
+      status: 'Preparing',
+      paymentStatus: 'Paid',
+      deliveryAddress: currentUser.address || { street: '128 Ocean Avenue', city: 'Metropolis', zip: '10002' },
+      createdAt: new Date().toISOString(),
+    };
+
+    dispatch(addCreatedOrder(newOrderObj));
+    dispatch(clearCart());
+    dispatch(toggleCartDrawer(false));
+    setSubmitting(false);
+
+    if (checkoutUrl) {
+      window.location.href = checkoutUrl;
+    } else {
+      navigate(`/order-success?orderId=${createdId}`);
     }
   };
 
